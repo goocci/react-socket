@@ -1,38 +1,38 @@
-import React from "react";
-import io from "socket.io-client";
+import React from 'react'
+import io from 'socket.io-client'
 
-class Chat extends React.Component{
-  constructor(props){
-    super(props);
+class Chat extends React.Component {
+  constructor (props) {
+    super(props)
 
     this.state = {
       username: '',
       message: '',
       messages: []
-    };
+    }
 
-    this.socket = io('localhost:8080');
+    this.socket = io('localhost:8080')
 
     this.sendMessage = ev => {
-      ev.preventDefault();
+      ev.preventDefault()
       this.socket.emit('SEND_MESSAGE', {
         author: this.state.username,
         message: this.state.message
-      });
-      this.setState({message: ''});
+      })
+      this.setState({message: ''})
     }
 
-    this.socket.on('RECEIVE_MESSAGE', function(data){
-      addMessage(data);
-    });
-    
+    this.socket.on('RECEIVE_MESSAGE', (data) => {
+      addMessage(data)
+    })
+
     const addMessage = data => {
-      console.log(data);
-      this.setState({messages: [...this.state.messages, data]});
-      console.log(this.state.messages);
-    };
+      console.log(data)
+      this.setState({messages: [...this.state.messages, data]})
+      console.log(this.state.messages)
+    }
   }
-  render(){
+  render () {
     return (
       <div className="container">
         <div className="row">
@@ -43,8 +43,16 @@ class Chat extends React.Component{
                 <hr/>
                 <div className="messages">
                   {this.state.messages.map((message, index) => {
+                    let style = {
+                      color: 'black'
+                    }
+                    if (this.state.username === message.author) {
+                      style = {
+                        color: 'red'
+                      }
+                    }
                     return (
-                      <div key={index}>{message.author}: {message.message}</div>
+                      <div key={index} style={style}>{message.author}: {message.message}</div>
                     )
                   })}
                 </div>
@@ -60,8 +68,8 @@ class Chat extends React.Component{
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default Chat;
+export default Chat

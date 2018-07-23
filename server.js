@@ -1,17 +1,17 @@
-var express = require('express');
-var app = express();
+const express = require('express')
+const app = express()
 
-server = app.listen(8080, function(){
-    console.log('server is running on port 8080')
-});
+server = app.listen(8080, () => {
+  console.log('server is running on port 8080')
+})
 
-var socket = require('socket.io');
-io = socket(server);
+const socket = require('socket.io')
+io = socket(server)
 
 io.on('connection', (socket) => {
-  console.log(socket.id);
+  console.log(socket.id)
 
-  socket.on('SEND_MESSAGE', function(data){
-      io.emit('RECEIVE_MESSAGE', data);
+  socket.on('SEND_MESSAGE', (data) => {
+    io.emit('RECEIVE_MESSAGE', data)
   })
-});
+})

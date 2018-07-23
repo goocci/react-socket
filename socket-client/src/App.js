@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import Chat from "./Chat";
-import './App.css';
+import React, { Component } from 'react'
+import Chat from "./Chat"
+import './App.css'
 
 class App extends Component {
   render() {
@@ -10,8 +10,8 @@ class App extends Component {
           <Chat/>
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App
