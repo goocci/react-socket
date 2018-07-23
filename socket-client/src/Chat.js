@@ -44,11 +44,13 @@ class Chat extends React.Component {
                 <div className="messages">
                   {this.state.messages.map((message, index) => {
                     let style = {
-                      color: 'black'
+                      color: 'black',
+                      textAlign: 'left'
                     }
                     if (this.state.username === message.author) {
                       style = {
-                        color: 'red'
+                        color: 'red',
+                        textAlign: 'right'
                       }
                     }
                     return (
