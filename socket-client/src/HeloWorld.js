@@ -6,31 +6,33 @@ class HeloWorld extends React.Component {
 
     this.gameStartClick = this.gameStartClick.bind(this)
     this.goMainClick = this.goMainClick.bind(this)
-    this.state = {screenState: false}
+    this.fightComputerClick = this.fightComputerClick.bind(this)
+    this.comeOnComputerClick = this.comeOnComputerClick.bind(this)
+    this.state = {screenState: 'main'}
   }
 
   gameStartClick () {
-    this.setState({screenState: true})
+    this.setState({screenState: 'gameMain'})
   }
 
   goMainClick () {
-    this.setState({screenState: false})
+    this.setState({screenState: 'main'})
+  }
+
+  fightComputerClick () {
+    this.setState({screenState: 'fightComputer'})
+  }
+
+  comeOnComputerClick () {
+    alert('OK')
   }
 
   render () {
-    const screenState = this.state.screenState
-    let button
-
-    if (screenState) {
-      button = <GoMainButton onClick={this.goMainClick} />
-    } else {
-      button = <GameStartButton onClick={this.gameStartClick} />
-    }
+    const props = this
 
     return (
       <div>
-        <Greeting screenState={screenState} />
-        {button}
+        <Greeting {...props} />
       </div>
     )
   }
@@ -46,6 +48,14 @@ function GameStart (props) {
         <br />
         <br />
       </div>
+      <div className='gameStartBtnDiv'>
+        <button id='gameStartBtn' onClick={props.goMainClick}>
+          <span id='gameStartBtnText'>Go Main</span>
+        </button>
+        <button id='gameStartBtn' onClick={props.fightComputerClick}>
+          <span id='gameStartBtnText'>Fight Computer</span>
+        </button>
+      </div>
     </div>
   )
 }
@@ -60,36 +70,39 @@ function Main (props) {
         <br />
         <br />
       </div>
+      <div className='gameStartBtnDiv'>
+        <button id='gameStartBtn' onClick={props.gameStartClick}>
+          <span id='gameStartBtnText'>Game Start</span>
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function FightComputer (props) {
+  return (
+    <div className='container'>
+      <div className='main'>
+        <span className='xd'>Hi! My Name Is Computer ^^</span>
+        <br />
+        <span className='nuts'>by goocci</span>
+        <br />
+        <br />
+      </div>
+      <div className='gameStartBtnDiv'>
+        <button id='gameStartBtn' onClick={props.comeOnComputerClick}>
+          <span id='gameStartBtnText'>Come On !! Computer</span>
+        </button>
+      </div>
     </div>
   )
 }
 
 function Greeting (props) {
-  const screenState = props.screenState
-  if (screenState) {
-    return <GameStart />
-  }
-  return <Main />
-}
-
-function GameStartButton (props) {
-  return (
-    <div className='gameStartBtnDiv'>
-      <button id='gameStartBtn' onClick={props.onClick}>
-        <span id='gameStartBtnText'>Game Start</span>
-      </button>
-    </div>
-  )
-}
-
-function GoMainButton (props) {
-  return (
-    <div className='gameStartBtnDiv'>
-      <button id='gameStartBtn' onClick={props.onClick}>
-        <span id='gameStartBtnText'>Go Main</span>
-      </button>
-    </div>
-  )
+  const screenState = props.state.screenState
+  if (screenState === 'gameMain') return <GameStart {...props} />
+  else if (screenState === 'main') return <Main {...props} />
+  else if (screenState === 'fightComputer') return <FightComputer {...props} />
 }
 
 export default HeloWorld
