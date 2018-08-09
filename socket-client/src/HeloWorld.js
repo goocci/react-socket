@@ -24,7 +24,7 @@ class HeloWorld extends React.Component {
   }
 
   comeOnComputerClick () {
-    alert('OK')
+    this.setState({screenState: 'fake'})
   }
 
   render () {
@@ -98,11 +98,22 @@ function FightComputer (props) {
   )
 }
 
+function Fake (props) {
+  return (
+    <div className='container'>
+      <div className='fakeImg'>
+        <img src='https://i.pinimg.com/originals/49/3a/cf/493acf37eb8dc9279a1ecdf8e41e385a.gif' />
+      </div>
+    </div>
+  )
+}
+
 function Greeting (props) {
   const screenState = props.state.screenState
   if (screenState === 'gameMain') return <GameStart {...props} />
   else if (screenState === 'main') return <Main {...props} />
   else if (screenState === 'fightComputer') return <FightComputer {...props} />
+  else if (screenState === 'fake') return <Fake {...props} />
 }
 
 export default HeloWorld

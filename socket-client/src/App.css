@@ -87,3 +87,12 @@ span.nuts {
   animation: changeColor 0.5s ease-in-out infinite;
   font-family: 'Press Start 2P';
 }
+
+.fakeImg {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.fakeImg img {
+  width: 100%;
+}
