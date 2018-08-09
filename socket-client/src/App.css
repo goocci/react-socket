@@ -1,3 +1,89 @@
 .App {
+
+}
+
+span.xd {
+  font-size: 35px;
+  animation: changeColor 1s ease-in-out infinite;
+  font-family: 'Press Start 2P';
+}
+
+span.nuts {
+  font-size: 15px;
+  animation: changeColor 3s ease-in-out infinite;
+  font-family: 'Press Start 2P';
+}
+
+@keyframes changeColor {
+	0% {
+		color: #cccccc;
+	}
+	25% {
+		color: #fc5353;
+	}
+	50% {
+		color: #befc53;
+	}
+	75% {
+		color: #fc53c6;
+	}
+	100% {
+		color: #cccccc;
+	}
+}
+
+.main {
   text-align: center;
+  margin-top: 40%;
+}
+
+.gameStartBtnDiv {
+  width: 200px;
+  margin: 0 auto;
+}
+
+#gameStartBtn {
+  padding: 15px;
+  width: 200px;
+  border: 1px solid white;
+  background-color: black;
+}
+
+#gameStartBtn:hover {
+  cursor: pointer;
+  animation: shakeThatBooty 0.3s linear 1;
+  -webkit-animation: shakeThatBooty 0.3s linear 1;
+  -moz-animation: shakeThatBooty 0.3s linear 1;
+  -o-animation: shakeThatBooty 0.3s linear 1;
+  -ms-animation: shakeThatBooty 0.3s linear 1;
+}
+
+@keyframes shakeThatBooty {
+  33% {
+    transform: rotateZ(10deg);
+    -webkit-transform: rotateZ(10deg);
+    -moz-transform: rotateZ(10deg);
+    -o-transform: rotateZ(10deg);
+    -ms-transform: rotateZ(10deg);
+  }
+  67% {
+    transform: rotateZ(-10deg);
+    -webkit-transform: rotateZ(-10deg);
+    -moz-transform: rotateZ(-10deg);
+    -o-transform: rotateZ(-10deg);
+    -ms-transform: rotateZ(-10deg);
+  }
+  100% {
+    transform: rotateZ(10deg);
+    -webkit-transform: rotateZ(10deg);
+    -moz-transform: rotateZ(10deg);
+    -o-transform: rotateZ(10deg);
+    -ms-transform: rotateZ(10deg);
+  }
+}
+
+#gameStartBtnText {
+  font-size: 15px;
+  animation: changeColor 0.5s ease-in-out infinite;
+  font-family: 'Press Start 2P';
 }
