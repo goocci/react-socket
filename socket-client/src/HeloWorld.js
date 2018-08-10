@@ -9,6 +9,17 @@ class HeloWorld extends React.Component {
     this.fightComputerClick = this.fightComputerClick.bind(this)
     this.comeOnComputerClick = this.comeOnComputerClick.bind(this)
     this.state = {screenState: 'main'}
+
+    this.godOfWord = [
+      {
+        word: '선풍기',
+        meaning: '바람을 일으키는 기계'
+      },
+      {
+        word: '길동무',
+        meaning: '같은 길을 걷는 친구'
+      }
+    ]
   }
 
   gameStartClick () {
@@ -99,11 +110,19 @@ function FightComputer (props) {
 }
 
 function Fake (props) {
+  const godOfWordList = props.godOfWord
+  const listItems = godOfWordList.map((word, index) =>
+    <li key={index}>
+      {word.word} <br />
+      {word.meaning}
+    </li>
+  )
   return (
     <div className='container'>
       <div className='fakeImg'>
         <img src='https://i.pinimg.com/originals/49/3a/cf/493acf37eb8dc9279a1ecdf8e41e385a.gif' />
       </div>
+      {listItems}
     </div>
   )
 }
