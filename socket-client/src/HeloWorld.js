@@ -8,16 +8,23 @@ class HeloWorld extends React.Component {
     this.goMainClick = this.goMainClick.bind(this)
     this.fightComputerClick = this.fightComputerClick.bind(this)
     this.comeOnComputerClick = this.comeOnComputerClick.bind(this)
-    this.state = {screenState: 'main'}
+    this.handleChange = this.handleChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.state = {
+      screenState: 'main',
+      value: ''
+    }
 
-    this.godOfWord = [
+    this.fightList = [
       {
-        word: '선풍기',
-        meaning: '바람을 일으키는 기계'
+        type: 'me',
+        word: '안녕하세요...',
+        meaning: ''
       },
       {
-        word: '길동무',
-        meaning: '같은 길을 걷는 친구'
+        type: 'com',
+        word: '먼저 하거라... 어리석은 양이여...',
+        meaning: ''
       }
     ]
   }
@@ -36,6 +43,20 @@ class HeloWorld extends React.Component {
 
   comeOnComputerClick () {
     this.setState({screenState: 'fake'})
+  }
+
+  handleChange (event) {
+    this.setState({value: event.target.value})
+  }
+
+  handleSubmit (event) {
+    this.fightList.push({
+      type: 'me',
+      word: this.state.value,
+      meaning: ''
+    })
+    this.setState({value: ''})
+    event.preventDefault()
   }
 
   render () {
@@ -110,19 +131,24 @@ function FightComputer (props) {
 }
 
 function Fake (props) {
-  const godOfWordList = props.godOfWord
-  const listItems = godOfWordList.map((word, index) =>
-    <li key={index}>
-      {word.word} <br />
-      {word.meaning}
+  const fightList = props.fightList
+  const listItems = fightList.map((item, index) =>
+    <li key={index} className={item.type}>
+      {item.type}:
+      {item.word} <br />
+      {item.meaning}
     </li>
   )
   return (
     <div className='container'>
-      <div className='fakeImg'>
-        <img src='https://i.pinimg.com/originals/49/3a/cf/493acf37eb8dc9279a1ecdf8e41e385a.gif' />
+      <div className='fight-com'>
+        {listItems}
       </div>
-      {listItems}
+      <form className='word-input' onSubmit={props.handleSubmit}>
+        <label>
+          <input type='text' value={props.state.value} onChange={props.handleChange} />
+        </label>
+      </form>
     </div>
   )
 }

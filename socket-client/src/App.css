@@ -88,11 +88,20 @@ span.nuts {
   font-family: 'Press Start 2P';
 }
 
-.fakeImg {
-  width: 100%;
-  margin: 0 auto;
+.fight-com {
+  color: white;
+  list-style: none;
 }
 
-.fakeImg img {
-  width: 100%;
+.com {
+  text-align: left;
+}
+
+.me {
+  text-align: right;
+}
+
+.word-input {
+  margin-top: 50px;
+  text-align: center;
 }
