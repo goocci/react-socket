@@ -26,35 +26,65 @@ let scrape = async () => {
   })
   const page = await browser.newPage()
 
-  await page.goto('https://ko.dict.naver.com/search.nhn?query=국&kind=keyword')
+  const queryWord = '치'
+  await page.goto(`https://ko.dict.naver.com/search.nhn?query=${queryWord}&kind=keyword`)
 
-  const result = await page.evaluate(() => {
-    let data = []
-    let elements = [...document.querySelectorAll('.lst3')[0].children]
-    console.log(elements)
-
-    elements.forEach((elem, index) => {
-      let word = elem.children[0].children[0].children[0].innerText
-      console.log(word)
-      let meaning = elem.children[2] ? elem.children[2].children[0].children[1].innerText : elem.children[1].innerText.replace(/ *\[[^)]*\] */g, '')
-      console.log(meaning)
-      let type = elem.children[2] ? elem.children[1].innerText : elem.children[1].innerText.split(' ')[0]
-      console.log(type)
-      console.log('--------------')
-
-      data.push({
-        word: word,
-        meaning: meaning
-      })
-    })
-
-    return data // Return our data array
+  const totalPageNum = await page.evaluate(() => {
+    let lastPageNum = [...document.querySelectorAll('.paginate a')].pop().innerText
+    return lastPageNum
   })
+  browser.close()
 
-  // browser.close()
-  return result // Return the data
+  let promiseAll = []
+  for (let i = 1; i <= totalPageNum; i++) {
+    promiseAll.push(getWord(queryWord, i))
+  }
+
+  const result = await Promise.all(promiseAll)
+  console.log(result)
 }
 
-scrape().then((value) => {
-  console.log(value) // Success!
-})
+scrape()
+  .then((value) => {
+    console.log('Last Result:', value) // Success!
+  })
+  .catch((err) => {
+    console.error(err)
+  })
+
+const getWord = (queryWord, pageNum) => {
+  return new Promise((resolve, reject) => {
+    async function superman () {
+      const browser = await puppeteer.launch({
+        headless: false,
+        devtools: true
+      })
+      const page = await browser.newPage()
+
+      await page.goto(`https://ko.dict.naver.com/search.nhn?query=${queryWord}&kind=keyword&page=${pageNum}`)
+      const result = await page.evaluate(() => {
+        let elements = [...document.querySelectorAll('.lst3')[0].children]
+
+        let data = []
+        elements.forEach((elem, index) => {
+          let word = elem.children[0].children[0].children[0].innerText
+          let meaning = elem.children[2] ? elem.children[2].children[0].children[1].innerText : elem.children[1].innerText.replace(/ *\[[^)]*\] */g, '')
+          let type = elem.children[2] ? elem.children[1].innerText : elem.children[1].innerText.split(' ')[0]
+
+          data.push({
+            word: word,
+            meaning: meaning,
+            type: type
+          })
+        })
+
+        return data
+      })
+
+      resolve(result)
+      browser.close()
+    }
+
+    superman()
+  })
+}
