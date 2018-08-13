@@ -26,7 +26,7 @@ let scrape = async () => {
   })
   const page = await browser.newPage()
 
-  const queryWord = '치'
+  const queryWord = '이'
   await page.goto(`https://ko.dict.naver.com/search.nhn?query=${queryWord}&kind=keyword`)
 
   const totalPageNum = await page.evaluate(() => {
@@ -34,6 +34,7 @@ let scrape = async () => {
     return lastPageNum
   })
   browser.close()
+  console.log('Last Page Number: ', totalPageNum)
 
   let promiseAll = []
   for (let i = 1; i <= totalPageNum; i++) {
@@ -67,7 +68,9 @@ const getWord = (queryWord, pageNum) => {
 
         let data = []
         elements.forEach((elem, index) => {
-          let word = elem.children[0].children[0].children[0].innerText
+          console.log(elem.children[0].children[0].innerText)
+          const regex = /[^\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/gi
+          let word = elem.children[0].children[0].innerText.replace(regex, '')
           let meaning = elem.children[2] ? elem.children[2].children[0].children[1].innerText : elem.children[1].innerText.replace(/ *\[[^)]*\] */g, '')
           let type = elem.children[2] ? elem.children[1].innerText : elem.children[1].innerText.split(' ')[0]
 
