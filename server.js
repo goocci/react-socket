@@ -26,11 +26,13 @@ let scrape = async () => {
   })
   const page = await browser.newPage()
 
-  const queryWord = '이'
+  const queryWord = '치'
   await page.goto(`https://ko.dict.naver.com/search.nhn?query=${queryWord}&kind=keyword`)
 
   const totalPageNum = await page.evaluate(() => {
-    let lastPageNum = [...document.querySelectorAll('.paginate a')].pop().innerText
+    let totalItemCount = [...document.querySelectorAll('.section .head em')].pop().innerText.replace('(', '').replace(')', '')
+    let lastPageNum = Math.ceil(Number(totalItemCount) / 10)
+
     return lastPageNum
   })
   browser.close()
@@ -57,8 +59,7 @@ const getWord = (queryWord, pageNum) => {
   return new Promise((resolve, reject) => {
     async function superman () {
       const browser = await puppeteer.launch({
-        headless: false,
-        devtools: true
+        headless: true
       })
       const page = await browser.newPage()
 
