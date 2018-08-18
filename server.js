@@ -20,9 +20,7 @@ const puppeteer = require('puppeteer')
 
 let scrape = async () => {
   const browser = await puppeteer.launch({
-    headless: false,
-    devtools: true,
-    slowMo: 250 // slow down by 250ms
+    headless: true
   })
   const page = await browser.newPage()
 
@@ -38,13 +36,13 @@ let scrape = async () => {
   browser.close()
   console.log('Last Page Number: ', totalPageNum)
 
-  let promiseAll = []
+  let results = []
   for (let i = 1; i <= totalPageNum; i++) {
-    promiseAll.push(getWord(queryWord, i))
+    let wordList = await getWord(queryWord, i)
+    results.push(wordList)
   }
 
-  const result = await Promise.all(promiseAll)
-  console.log(result)
+  return results
 }
 
 scrape()
@@ -69,10 +67,17 @@ const getWord = (queryWord, pageNum) => {
 
         let data = []
         elements.forEach((elem, index) => {
-          console.log(elem.children[0].children[0].innerText)
+          // 단어
           const regex = /[^\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/gi
           let word = elem.children[0].children[0].innerText.replace(regex, '')
-          let meaning = elem.children[2] ? elem.children[2].children[0].children[1].innerText : elem.children[1].innerText.replace(/ *\[[^)]*\] */g, '')
+
+          // 뜻
+          let meaning = ''
+          if (elem.children[2]) {
+            if (elem.children[2].localName === 'ul') meaning = elem.children[2].children[0].children[1].innerText
+          } else meaning = elem.children[1].innerText.replace(/ *\[[^)]*\] */g, '')
+
+          // 품사
           let type = elem.children[2] ? elem.children[1].innerText : elem.children[1].innerText.split(' ')[0]
 
           data.push({
