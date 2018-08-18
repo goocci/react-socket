@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 
 class HeloWorld extends React.Component {
   constructor (props) {
@@ -50,6 +51,13 @@ class HeloWorld extends React.Component {
   }
 
   handleSubmit (event) {
+    axios.get('http://127.0.0.1:8080/')
+      .then(function (response) {
+        console.log(response)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
     this.fightList.push({
       type: 'me',
       word: this.state.value,

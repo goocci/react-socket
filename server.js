@@ -1,20 +1,42 @@
 const express = require('express')
 const app = express()
 
-server = app.listen(8080, () => {
+app.listen(8080, () => {
   console.log('server is running on port 8080')
 })
 
-const socket = require('socket.io')
-io = socket(server)
+// cors 허용
+app.use(
+  (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE, PATCH')
+    res.header('Access-Control-Allow-Headers', 'Content-Type, apikey, x-access-token')
+    next()
+  }
+)
 
-io.on('connection', (socket) => {
-  console.log(socket.id)
-
-  socket.on('SEND_MESSAGE', (data) => {
-    io.emit('RECEIVE_MESSAGE', data)
-  })
+app.get('/', (req, res) => {
+  scrape()
+    .then((value) => {
+      res.status(200).json({
+        value: value
+      })
+    })
+    .catch((err) => {
+      console.error(err)
+    })
 })
+
+// const socket = require('socket.io')
+// io = socket(server)
+
+// io.on('connection', (socket) => {
+//   console.log(socket.id)
+
+//   socket.on('SEND_MESSAGE', (data) => {
+//     io.emit('RECEIVE_MESSAGE', data)
+//   })
+// })
 
 const puppeteer = require('puppeteer')
 
@@ -27,6 +49,7 @@ let scrape = async () => {
   const queryWord = '치'
   await page.goto(`https://ko.dict.naver.com/search.nhn?query=${queryWord}&kind=keyword`)
 
+  // 마지막 페이지 번호 산출
   const totalPageNum = await page.evaluate(() => {
     let totalItemCount = [...document.querySelectorAll('.section .head em')].pop().innerText.replace('(', '').replace(')', '')
     let lastPageNum = Math.ceil(Number(totalItemCount) / 10)
@@ -45,14 +68,11 @@ let scrape = async () => {
   return results
 }
 
-scrape()
-  .then((value) => {
-    console.log('Last Result:', value) // Success!
-  })
-  .catch((err) => {
-    console.error(err)
-  })
-
+/**
+ * [Func] 특정 페이지의 요청 단어 Scraping
+ * @param {*} queryWord // 요청 단어
+ * @param {*} pageNum // 총 페이지 수
+ */
 const getWord = (queryWord, pageNum) => {
   return new Promise((resolve, reject) => {
     async function superman () {
