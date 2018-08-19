@@ -15,12 +15,10 @@ app.use(
   }
 )
 
-app.get('/', (req, res) => {
-  scrape()
+app.get('/scrape', (req, res) => {
+  scrape(req.query.endWord)
     .then((value) => {
-      res.status(200).json({
-        value: value
-      })
+      res.status(200).json(value)
     })
     .catch((err) => {
       console.error(err)
@@ -40,17 +38,16 @@ app.get('/', (req, res) => {
 
 const puppeteer = require('puppeteer')
 
-let scrape = async () => {
+let scrape = async (endWord) => {
   const browser = await puppeteer.launch({
     headless: true
   })
   const page = await browser.newPage()
 
-  const queryWord = '치'
-  await page.goto(`https://ko.dict.naver.com/search.nhn?query=${queryWord}&kind=keyword`)
+  await page.goto(`https://ko.dict.naver.com/search.nhn?query=${endWord}로시작하는단어&kind=keyword`)
 
   // 마지막 페이지 번호 산출
-  const totalPageNum = await page.evaluate(() => {
+  let totalPageNum = await page.evaluate(() => {
     let totalItemCount = [...document.querySelectorAll('.section .head em')].pop().innerText.replace('(', '').replace(')', '')
     let lastPageNum = Math.ceil(Number(totalItemCount) / 10)
 
@@ -59,12 +56,12 @@ let scrape = async () => {
   browser.close()
   console.log('Last Page Number: ', totalPageNum)
 
-  let results = []
-  for (let i = 1; i <= totalPageNum; i++) {
-    let wordList = await getWord(queryWord, i)
-    results.push(wordList)
-  }
+  let randomPageNum = getRandomIntInclusive(1, totalPageNum)
+  console.log('Random Page Number: ', randomPageNum)
 
+  let results = await getWord(endWord, randomPageNum)
+
+  console.log(results)
   return results
 }
 
@@ -81,29 +78,30 @@ const getWord = (queryWord, pageNum) => {
       })
       const page = await browser.newPage()
 
-      await page.goto(`https://ko.dict.naver.com/search.nhn?query=${queryWord}&kind=keyword&page=${pageNum}`)
+      await page.goto(`https://ko.dict.naver.com/search.nhn?query=${queryWord}로시작하는단어&kind=keyword&page=${pageNum}`)
       const result = await page.evaluate(() => {
         let elements = [...document.querySelectorAll('.lst3')[0].children]
+        console.log(elements)
 
         let data = []
         elements.forEach((elem, index) => {
-          // 단어
+          const elemArr = [...elem.children]
           const regex = /[^\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/gi
-          let word = elem.children[0].children[0].innerText.replace(regex, '')
 
-          // 뜻
-          let meaning = ''
-          if (elem.children[2]) {
-            if (elem.children[2].localName === 'ul') meaning = elem.children[2].children[0].children[1].innerText
-          } else meaning = elem.children[1].innerText.replace(/ *\[[^)]*\] */g, '')
+          let word = '' // 단어
+          let meaning = '' // 뜻
+          elemArr.forEach((child) => {
+            if (child.localName === 'div') word = child.children[0].innerText.replace(regex, '')
+            if (child.localName === 'ul') meaning = child.children[0].children[1].innerText
+            if (child.localName === 'p' && child.className !== 'syn') meaning = child.innerText
+          })
 
-          // 품사
-          let type = elem.children[2] ? elem.children[1].innerText : elem.children[1].innerText.split(' ')[0]
+          // [TODO] 동사..형용사..도 있음...
+          // [TODO] 산기슭 ...
 
           data.push({
             word: word,
-            meaning: meaning,
-            type: type
+            meaning: meaning
           })
         })
 
@@ -116,4 +114,13 @@ const getWord = (queryWord, pageNum) => {
 
     superman()
   })
+}
+
+/**
+ * [Func] 임의 숫자 반환
+ * @param {*} min // 최소 숫자
+ * @param {*} max // 최대 숫자
+ */
+function getRandomIntInclusive (min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min
 }

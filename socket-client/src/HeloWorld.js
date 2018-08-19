@@ -51,20 +51,32 @@ class HeloWorld extends React.Component {
   }
 
   handleSubmit (event) {
-    axios.get('http://127.0.0.1:8080/')
-      .then(function (response) {
-        console.log(response)
-      })
-      .catch(function (error) {
-        console.log(error)
-      })
     this.fightList.push({
       type: 'me',
       word: this.state.value,
       meaning: ''
     })
-    this.setState({value: ''})
+
+    let value = this.state.value
+    let endWod = value.substr(value.length - 1)
+    this.setState({ value: '' })
     event.preventDefault()
+
+    let that = this
+    axios.get(`http://127.0.0.1:8080/scrape?endWord=${endWod}`)
+      .then((response) => {
+        console.log(response)
+        that.fightList.push({
+          type: 'com',
+          word: response.data[0].word,
+          meaning: response.data[0].meaning
+        })
+
+        that.setState({ value: '' })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   render () {
