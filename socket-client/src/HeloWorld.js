@@ -152,13 +152,35 @@ function FightComputer (props) {
 
 function Fake (props) {
   const fightList = props.fightList
-  const listItems = fightList.map((item, index) =>
-    <li key={index} className={item.type}>
-      {item.type}:
-      {item.word} <br />
-      {item.meaning}
-    </li>
-  )
+  let name = ''
+  let lastCharRemoved = ''
+  let lastChar = ''
+  const listItems = fightList.map((item, index) => {
+    if (item.type === 'com') {
+      name = ' 단어의 신 '
+      lastCharRemoved = item.word.slice(0, item.word.length - 1)
+      lastChar = item.word.slice(item.word.length - 1)
+      return <li key={index} className={item.type}>
+        [<span className='comName'>{name}</span>] <br />
+        {lastCharRemoved}
+        <span className='lastWord'>{lastChar}</span> <br />
+        {item.meaning}
+      </li>
+    }
+
+    if (item.type === 'me') {
+      name = ' 허접 '
+      lastCharRemoved = item.word.slice(0, item.word.length - 1)
+      lastChar = item.word.slice(item.word.length - 1)
+      return <li key={index} className={item.type}>
+        [<span className='meName'>{name}</span>] <br />
+        {lastCharRemoved}
+        <span className='lastWord'>{lastChar}</span> <br />
+        {item.meaning}
+      </li>
+    }
+  })
+
   return (
     <div className='container'>
       <div className='fight-com'>

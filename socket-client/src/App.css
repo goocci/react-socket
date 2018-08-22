@@ -105,3 +105,16 @@ span.nuts {
   margin-top: 50px;
   text-align: center;
 }
+
+.comName {
+  color: red;
+}
+
+.meName {
+  color: greenyellow;
+}
+
+.lastWord {
+  font-size: 1.5rem;
+  color: violet;
+}
