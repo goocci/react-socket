@@ -56,12 +56,11 @@ let scrape = async (endWord) => {
   browser.close()
   console.log('Last Page Number: ', totalPageNum)
 
-  let randomPageNum = getRandomIntInclusive(1, totalPageNum)
-  console.log('Random Page Number: ', randomPageNum)
-
   let result = ''
   let loop = true
   while (loop) { // "명사"를 찾을 때 까지 반복
+    let randomPageNum = getRandomIntInclusive(1, totalPageNum)
+    console.log('Random Page Number: ', randomPageNum)
     result = await getWord(endWord, randomPageNum)
     if (result.type === '명사') loop = false
   }
