@@ -59,10 +59,14 @@ let scrape = async (endWord) => {
   let randomPageNum = getRandomIntInclusive(1, totalPageNum)
   console.log('Random Page Number: ', randomPageNum)
 
-  let results = await getWord(endWord, randomPageNum)
+  let result = ''
+  let loop = true
+  while (loop) { // "명사"를 찾을 때 까지 반복
+    result = await getWord(endWord, randomPageNum)
+    if (result.type === '명사') loop = false
+  }
 
-  console.log(results)
-  return results
+  return result
 }
 
 /**
@@ -90,25 +94,31 @@ const getWord = (queryWord, pageNum) => {
 
           let word = '' // 단어
           let meaning = '' // 뜻
+          let type = '' // 품사
           elemArr.forEach((child) => {
             if (child.localName === 'div') word = child.children[0].innerText.replace(regex, '')
             if (child.localName === 'ul') meaning = child.children[0].children[1].innerText
-            if (child.localName === 'p' && child.className !== 'syn') meaning = child.innerText
+            if (child.localName === 'p') type = meaning = child.innerText
+            if (child.localName === 'p' && child.className !== 'syn') {
+              meaning = child.innerText.slice(type.indexOf(']') + 1)
+            }
           })
 
-          // [TODO] 동사..형용사..도 있음...
           // [TODO] 산기슭 ...
 
           data.push({
             word: word,
-            meaning: meaning
+            meaning: meaning,
+            type: type.substring(type.indexOf('[') + 1, type.indexOf(']'))
           })
         })
 
         return data
       })
 
-      resolve(result)
+      let pick = result[Math.floor(Math.random() * result.length)]
+
+      resolve(pick)
       browser.close()
     }
 

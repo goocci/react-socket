@@ -68,8 +68,8 @@ class HeloWorld extends React.Component {
         console.log(response)
         that.fightList.push({
           type: 'com',
-          word: response.data[0].word,
-          meaning: response.data[0].meaning
+          word: response.data.word,
+          meaning: response.data.meaning
         })
 
         that.setState({ value: '' })
